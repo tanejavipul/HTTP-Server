@@ -49,17 +49,16 @@ void *thread_handler(void *socket_desc) {
                 root_address[strlen(root_address) - 1] = '\0';
             }
             handler(sock, &header, root_address);
-        }
-        else {
+        } else {
             //1.0 http request
             if (header.http_version == 0) {
                 write(sock, RESPONSE_400_0_CLOSE, strlen(RESPONSE_400_0_CLOSE));
-            //1.1 http request
+                //1.1 http request
             } else {
                 //handle for -1 means bad request in headers
 
                 //if connection type specified as close otherwise keep-alive
-                if ( contains(header.connectiontype, TYPE_CLOSE) == 0 ) {
+                if (contains(header.connectiontype, TYPE_CLOSE) == 0) {
                     write(sock, RESPONSE_400_0_CLOSE, strlen(RESPONSE_400_0_CLOSE));
                 } else {
                     write(sock, RESPONSE_400_KEEP, strlen(RESPONSE_400_KEEP));
@@ -73,7 +72,6 @@ void *thread_handler(void *socket_desc) {
     close(sock);
     pthread_exit(NULL);
 }
-
 
 
 int main(int argc, char *argv[]) {

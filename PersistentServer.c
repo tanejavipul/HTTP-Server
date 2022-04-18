@@ -1,6 +1,6 @@
 #include "ServerHelper.c"
 
-int main( int argc, char *argv[] )  {
+int main(int argc, char *argv[]) {
 
     if (argc != 3) {
         fprintf(stderr, "Invalid Number of Arguments!\n");
@@ -11,7 +11,7 @@ int main( int argc, char *argv[] )  {
     int port_number = atoi(argv[1]);
     char *root_address = argv[2];
 
-    if(access(root_address, F_OK) != 0) {
+    if (access(root_address, F_OK) != 0) {
         fprintf(stderr, "http root path invalid with Error Code: %d\n", access(root_address, F_OK));
         return -1;
     }
@@ -28,8 +28,7 @@ int main( int argc, char *argv[] )  {
     header.if_unmodified_since = NULL;
     header.connectiontype = NULL;
 
-    if ((server = socket(AF_INET, SOCK_STREAM, 0)) == 0)
-    {
+    if ((server = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket failed");
         exit(-1);
     }
@@ -42,8 +41,7 @@ int main( int argc, char *argv[] )  {
 
     int get_header_output;
     int listening = listen(server, 10);
-    if (listening < 0)
-    {
+    if (listening < 0) {
         fprintf(stderr, "The server is not listening");
         return 1;
     }
@@ -51,10 +49,9 @@ int main( int argc, char *argv[] )  {
     timeout.tv_sec = 1;
     timeout.tv_usec = 0;
     printf("------------------- PERSISTENT SERVER -------------------\n");
-    while(1) { //while loop so it can listen to more connections
+    while (1) { //while loop so it can listen to more connections
 
-        if ((new_socket = accept(server, NULL, NULL)) <0)
-        {
+        if ((new_socket = accept(server, NULL, NULL)) < 0) {
             perror("ACCEPT FAILED");
             exit(EXIT_FAILURE);
         }
@@ -62,7 +59,7 @@ int main( int argc, char *argv[] )  {
         char buffer[30000];
         setsockopt(new_socket, SOL_SOCKET, SO_RCVTIMEO, (const char *) &timeout, sizeof timeout);
 
-        while(read(new_socket, buffer, 30000) > 0) {
+        while (read(new_socket, buffer, 30000) > 0) {
 
             get_header_output = get_header(&header, buffer);
 
@@ -78,10 +75,10 @@ int main( int argc, char *argv[] )  {
                 //1.0 http request
                 if (header.http_version == 0) {
                     write(new_socket, RESPONSE_400_0_CLOSE, strlen(RESPONSE_400_0_CLOSE));
-                //1.1 http request
+                    //1.1 http request
                 } else {
                     //if connection type specified as close otherwise keep-alive
-                    if ( contains(header.connectiontype, TYPE_CLOSE) == 0 ) {
+                    if (contains(header.connectiontype, TYPE_CLOSE) == 0) {
                         write(new_socket, RESPONSE_400_0_CLOSE, strlen(RESPONSE_400_0_CLOSE));
                     } else {
                         write(new_socket, RESPONSE_400_KEEP, strlen(RESPONSE_400_KEEP));
@@ -89,7 +86,8 @@ int main( int argc, char *argv[] )  {
                 }
             }
 
-            if( contains(header.connectiontype, TYPE_CLOSE) == 0 ) { //socket only closes when 1. socket times out or 2. client sends Connection: close header inside a header"
+            if (contains(header.connectiontype, TYPE_CLOSE) ==
+                0) { //socket only closes when 1. socket times out or 2. client sends Connection: close header inside a header"
                 free_memory(&header);
                 break;
             }

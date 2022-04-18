@@ -71,14 +71,13 @@ int get_header(struct Header *header, char *input) {
             if (contains(file_type, JPG) == 0 || contains(file_type, JPEG) == 0 || contains(file_type, PNG) == 0) {
                 header->type = malloc(sizeof(char) * (strlen(IMAGE)));
                 strcpy(header->type, IMAGE);
-            }
-            else if (contains(file_type, CSS) == 0 || contains(file_type, HTML) == 0 || contains(file_type, JS) == 0 ||
+            } else if (contains(file_type, CSS) == 0 || contains(file_type, HTML) == 0 ||
+                       contains(file_type, JS) == 0 ||
                        contains(file_type, TXT) == 0) {
 
                 header->type = malloc(sizeof(char) * (strlen(TEXT)));
                 strcpy(header->type, TEXT);
-            }
-            else {
+            } else {
                 free(http_version);
                 free(file_name);
                 free(extract_token);
@@ -141,7 +140,7 @@ int get_header(struct Header *header, char *input) {
 
             char *output = malloc(sizeof(char) * (strlen(extract_token)));
             int x = sscanf(extract_token, "Connection: %[^\t\n]", output);
-            if(x == 1) {
+            if (x == 1) {
                 header->connectiontype = malloc(sizeof(char) * (strlen(output)));
                 strcpy(header->connectiontype, output);
             }
@@ -195,10 +194,10 @@ void handler(int socket, struct Header *header, char *root_address) {
                 //1.0 http request
                 if (header->http_version == 0) {
                     write(socket, RESPONSE_304_0_CLOSE, strlen(RESPONSE_304_0_CLOSE));
-                //1.1 http request
+                    //1.1 http request
                 } else {
                     //if connection type specified as close otherwise keep-alive
-                    if ( contains(header->connectiontype, TYPE_CLOSE) == 0 ) {
+                    if (contains(header->connectiontype, TYPE_CLOSE) == 0) {
                         write(socket, RESPONSE_304_0_CLOSE, strlen(RESPONSE_304_0_CLOSE));
                     } else {
                         write(socket, RESPONSE_304_KEEP, strlen(RESPONSE_304_KEEP));
@@ -216,10 +215,10 @@ void handler(int socket, struct Header *header, char *root_address) {
                 //1.0 http request
                 if (header->http_version == 0) {
                     write(socket, RESPONSE_304_0_CLOSE, strlen(RESPONSE_304_0_CLOSE));
-                //1.1 http request
+                    //1.1 http request
                 } else {
                     //if connection type specified as close otherwise keep-alive
-                    if ( contains(header->connectiontype, TYPE_CLOSE) == 0 ) {
+                    if (contains(header->connectiontype, TYPE_CLOSE) == 0) {
                         write(socket, RESPONSE_304_0_CLOSE, strlen(RESPONSE_304_0_CLOSE));
                     } else {
                         write(socket, RESPONSE_304_KEEP, strlen(RESPONSE_304_KEEP));
@@ -245,10 +244,10 @@ void handler(int socket, struct Header *header, char *root_address) {
         //1.0 http request
         if (header->http_version == 0) {
             write(socket, RESPONSE_404_0_CLOSE, strlen(RESPONSE_404_0_CLOSE));
-        //1.1 http request
+            //1.1 http request
         } else {
             //if connection type specified as close otherwise keep-alive
-            if ( contains(header->connectiontype, TYPE_CLOSE) == 0 ) {
+            if (contains(header->connectiontype, TYPE_CLOSE) == 0) {
                 write(socket, RESPONSE_404_0_CLOSE, strlen(RESPONSE_404_0_CLOSE));
             } else {
                 write(socket, RESPONSE_404_KEEP, strlen(RESPONSE_404_KEEP));
